@@ -1,104 +1,143 @@
 <template>
   <div class="card">
+
     <h2>Crear reserva</h2>
 
     <form @submit.prevent="submitReservation">
-      <div class="grid">
-        <input v-model="form.name" type="text" placeholder="Nombre completo" required />
-        <input v-model="form.email" type="email" placeholder="Correo electrónico" required />
-        <input v-model="form.phone" type="text" placeholder="Teléfono" required />
-        <input v-model="form.date" type="date" required />
-        <input v-model="form.time" type="time" required />
-        <input v-model.number="form.guests" type="number" min="1" placeholder="Cantidad de invitados" required />
+
+      <input v-model="form.name" placeholder="Nombre" required />
+
+      <input v-model="form.phone" placeholder="Teléfono" required />
+
+      <input type="date" v-model="form.date" required />
+
+      <input type="time" v-model="form.time" required />
+
+      <input
+        type="number"
+        v-model.number="form.guests"
+        min="1"
+        placeholder="Cantidad de invitados"
+        required
+      />
+
+      <div class="buttons">
+        <button type="button" @click="checkAvailability">
+          Consultar disponibilidad
+        </button>
+
+        <button type="submit">
+          Crear reserva
+        </button>
       </div>
 
-      <button type="button" @click="checkAvailability">Consultar disponibilidad</button>
-      <button type="submit">Crear reserva</button>
     </form>
 
-    <div v-if="availabilityMessage" class="message">
+    <p v-if="availabilityMessage" class="success">
       {{ availabilityMessage }}
-    </div>
+    </p>
 
-    <div v-if="errorMessage" class="error">
+    <p v-if="errorMessage" class="error">
       {{ errorMessage }}
-    </div>
+    </p>
+
   </div>
 </template>
 
 <script>
+
 import api from "../services/api"
 
 export default {
-  data() {
-    return {
-      form: {
-        name: "",
-        email: "",
-        phone: "",
-        date: "",
-        time: "",
-        guests: 1
-      },
-      availabilityMessage: "",
-      errorMessage: ""
-    }
-  },
-  methods: {
 
-    async checkAvailability() {
+data(){
 
-      this.availabilityMessage = ""
-      this.errorMessage = ""
+return{
 
-      try {
+form:{
+name:"",
+phone:"",
+date:"",
+time:"",
+guests:1
+},
 
-        const response = await api.get("/reservations/availability/", {
-          params: {
-            date: this.form.date,
-            time: this.form.time,
-            guests: this.form.guests
-          }
-        })
+availabilityMessage:"",
+errorMessage:""
 
-        this.availabilityMessage =
-          `Disponible: Mesa ${response.data.table_number} para ${response.data.capacity} personas.`
-
-      } catch (error) {
-
-        this.errorMessage =
-          error.response?.data?.error || "No hay disponibilidad."
-
-      }
-    },
-
-    async submitReservation() {
-
-      this.availabilityMessage = ""
-      this.errorMessage = ""
-
-      try {
-
-        const response = await api.post("/reservations/create/", this.form)
-
-        this.$router.push({
-          name: "success",
-          query: {
-            code: response.data.reservation_code,
-            table: response.data.table_number,
-            status: response.data.status
-          }
-        })
-
-      } catch (error) {
-
-        this.errorMessage =
-          error.response?.data?.error || "Error al crear la reserva."
-
-      }
-    }
-  }
 }
+
+},
+
+methods:{
+
+async checkAvailability(){
+
+this.errorMessage=""
+this.availabilityMessage=""
+
+try{
+
+const response = await api.get("/reservations/availability/",{
+
+params:{
+date:this.form.date,
+time:this.form.time,
+guests:this.form.guests
+}
+
+})
+
+this.availabilityMessage="Mesa disponible."
+
+}catch(error){
+
+this.errorMessage=
+error.response?.data?.error ||
+"No hay disponibilidad."
+
+}
+
+},
+
+async submitReservation(){
+
+this.errorMessage=""
+this.availabilityMessage=""
+
+try{
+
+const response = await api.post("/reservations/create/",{
+
+name:this.form.name,
+phone:this.form.phone,
+date:this.form.date,
+time:this.form.time,
+guests:this.form.guests
+
+})
+
+this.$router.push({
+name:"success",
+query:{
+code:response.data.reservation_code
+}
+})
+
+}catch(error){
+
+this.errorMessage=
+error.response?.data?.error ||
+"Error al crear la reserva."
+
+}
+
+}
+
+}
+
+}
+
 </script>
 
 <style scoped>
@@ -108,25 +147,25 @@ background:white;
 padding:24px;
 border-radius:10px;
 box-shadow:0 2px 8px rgba(0,0,0,.08);
-}
-
-.grid{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:12px;
-margin-bottom:16px;
+max-width:400px;
+margin:auto;
 }
 
 input{
-padding:12px;
+width:100%;
+margin-bottom:12px;
+padding:10px;
 border:1px solid #ccc;
 border-radius:8px;
 }
 
+.buttons{
+display:flex;
+gap:10px;
+}
+
 button{
-margin-right:10px;
-margin-top:10px;
-padding:12px 18px;
+padding:10px 16px;
 border:none;
 border-radius:8px;
 background:#2563eb;
@@ -134,16 +173,14 @@ color:white;
 cursor:pointer;
 }
 
-.message{
-margin-top:20px;
-color:green;
-font-weight:bold;
+.error{
+color:red;
+margin-top:10px;
 }
 
-.error{
-margin-top:20px;
-color:red;
-font-weight:bold;
+.success{
+color:green;
+margin-top:10px;
 }
 
 </style>

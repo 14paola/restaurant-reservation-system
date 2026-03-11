@@ -1,86 +1,122 @@
 <template>
-  <div class="card">
-    <h2>Cancelar reserva</h2>
 
-    <form @submit.prevent="cancelReservation">
-      <input v-model="reservation_code" type="text" placeholder="Código de reserva" required />
-      <button type="submit">Cancelar reserva</button>
-    </form>
+<div class="card">
 
-    <div v-if="message" class="message">
-      {{ message }}
-    </div>
+<h2>Cancelar reserva</h2>
 
-    <div v-if="errorMessage" class="error">
-      {{ errorMessage }}
-    </div>
-  </div>
+<form @submit.prevent="cancelReservation">
+
+<input
+v-model="reservationCode"
+placeholder="Código de reserva"
+required
+/>
+
+<button type="submit">
+Cancelar reserva
+</button>
+
+</form>
+
+<p v-if="message" class="success">
+{{ message }}
+</p>
+
+<p v-if="errorMessage" class="error">
+{{ errorMessage }}
+</p>
+
+</div>
+
 </template>
 
 <script>
-import api from '../services/api'
 
-export default {
-  data() {
-    return {
-      reservation_code: '',
-      message: '',
-      errorMessage: ''
-    }
-  },
-  methods: {
-    async cancelReservation() {
-      this.message = ''
-      this.errorMessage = ''
+import api from "../services/api"
 
-      try {
-        const response = await api.post('/reservations/cancel/', {
-          reservation_code: this.reservationCode
-        })
+export default{
 
-        this.message = response.data.message
-      } catch (error) {
-        this.errorMessage = error.response?.data?.error || 'Error al cancelar la reserva.'
-      }
-    }
-  }
+data(){
+
+return{
+
+reservationCode:"",
+message:"",
+errorMessage:""
+
 }
+
+},
+
+methods:{
+
+async cancelReservation(){
+
+this.message=""
+this.errorMessage=""
+
+try{
+
+await api.post("/reservations/cancel/",{
+
+reservation_code:this.reservationCode
+
+})
+
+this.message="Reserva cancelada correctamente."
+
+}catch(error){
+
+this.errorMessage=
+error.response?.data?.error ||
+"Error al cancelar la reserva."
+
+}
+
+}
+
+}
+
+}
+
 </script>
 
 <style scoped>
-.card {
-  background: white;
-  padding: 24px;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+
+.card{
+background:white;
+padding:24px;
+border-radius:10px;
+box-shadow:0 2px 8px rgba(0,0,0,.08);
+max-width:400px;
+margin:auto;
 }
 
-input {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  margin-bottom: 12px;
+input{
+width:100%;
+margin-bottom:12px;
+padding:10px;
+border:1px solid #ccc;
+border-radius:8px;
 }
 
-button {
-  padding: 12px 18px;
-  border: none;
-  border-radius: 8px;
-  background: #dc2626;
-  color: white;
-  cursor: pointer;
+button{
+padding:10px 16px;
+border:none;
+border-radius:8px;
+background:#dc2626;
+color:white;
+cursor:pointer;
 }
 
-.message {
-  margin-top: 20px;
-  color: green;
-  font-weight: bold;
+.error{
+color:red;
+margin-top:10px;
 }
 
-.error {
-  margin-top: 20px;
-  color: red;
-  font-weight: bold;
+.success{
+color:green;
+margin-top:10px;
 }
+
 </style>

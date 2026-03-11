@@ -51,12 +51,12 @@ export default {
 
       try {
         const response = await api.get('/api/reservations/availability/', {
-          params: {
-            date: this.form.date,
-            time: this.form.time,
-            guests: this.form.guests
-          }
-        })
+        params: {
+          date: this.date,
+          time: this.time,
+        guests: this.guests
+  }
+})
 
         this.availabilityMessage = `Disponible: Mesa ${response.data.table_number} para ${response.data.capacity} personas.`
       } catch (error) {

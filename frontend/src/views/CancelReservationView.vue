@@ -34,8 +34,8 @@ export default {
       this.errorMessage = ''
 
       try {
-        const response = await api.post('/api/reservations/cancel/', {
-          reservation_code: this.reservation_code
+        const response = await api.post('/reservations/cancel/', {
+          reservation_code: this.reservationCode
         })
 
         this.message = response.data.message

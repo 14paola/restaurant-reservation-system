@@ -50,7 +50,7 @@ export default {
       this.errorMessage = ''
 
       try {
-        const response = await api.get('/api/reservations/availability/', {
+        const response = await api.get('/reservations/availability/', {
         params: {
           date: this.date,
           time: this.time,

@@ -111,7 +111,7 @@ export default {
         if (this.filters.date) params.date = this.filters.date
         if (this.filters.status) params.status = this.filters.status
 
-        const response = await api.get('/api/reservations/admin/', {
+        const response = await api.get('/reservations/admin/', {
           params,
           headers: {
             Authorization: `Bearer ${this.token}`

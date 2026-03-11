@@ -71,14 +71,23 @@ def find_available_table(reservation_date, reservation_time, guests):
 
 @transaction.atomic
 def create_reservation(data):
+
+    existing_reservations = Reservation.objects.filter(
+        date=data['date'],
+        time=data['time'],
+        status='confirmed'
+    ).count()
+
+    total_tables = Table.objects.filter(is_active=True).count()
+
+    if existing_reservations >= total_tables:
+        raise ValueError("No hay mesas disponibles para ese horario.")
+
     table = find_available_table(
         reservation_date=data['date'],
         reservation_time=data['time'],
         guests=data['guests']
     )
-
-    # Bloquear la mesa para evitar reservas simultáneas
-    table = Table.objects.select_for_update().get(id=table.id)
 
     reservation = Reservation.objects.create(
         name=data['name'],
@@ -92,7 +101,6 @@ def create_reservation(data):
     )
 
     return reservation
-
 
 def cancel_reservation_by_code(reservation_code):
     try:

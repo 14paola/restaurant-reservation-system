@@ -77,6 +77,9 @@ def create_reservation(data):
         guests=data['guests']
     )
 
+    # Bloquear la mesa para evitar reservas simultáneas
+    table = Table.objects.select_for_update().get(id=table.id)
+
     reservation = Reservation.objects.create(
         name=data['name'],
         email=data['email'],
@@ -87,6 +90,7 @@ def create_reservation(data):
         table=table,
         status='confirmed'
     )
+
     return reservation
 
 

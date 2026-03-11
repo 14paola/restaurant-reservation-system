@@ -27,59 +27,74 @@
 </template>
 
 <script>
-import api from '../services/api'
+import api from "../services/api"
 
 export default {
   data() {
     return {
       form: {
-        name: '',
-        email: '',
-        phone: '',
-        date: '',
-        time: '',
+        name: "",
+        email: "",
+        phone: "",
+        date: "",
+        time: "",
         guests: 1
       },
-      availabilityMessage: '',
-      errorMessage: ''
+      availabilityMessage: "",
+      errorMessage: ""
     }
   },
   methods: {
+
     async checkAvailability() {
-      this.availabilityMessage = ''
-      this.errorMessage = ''
+
+      this.availabilityMessage = ""
+      this.errorMessage = ""
 
       try {
-        const response = await api.get('/reservations/availability/', {
-        params: {
-          date: this.date,
-          time: this.time,
-        guests: this.guests
-  }
-})
 
-        this.availabilityMessage = `Disponible: Mesa ${response.data.table_number} para ${response.data.capacity} personas.`
+        const response = await api.get("/reservations/availability/", {
+          params: {
+            date: this.form.date,
+            time: this.form.time,
+            guests: this.form.guests
+          }
+        })
+
+        this.availabilityMessage =
+          `Disponible: Mesa ${response.data.table_number} para ${response.data.capacity} personas.`
+
       } catch (error) {
-        this.errorMessage = error.response?.data?.error || 'No hay disponibilidad.'
+
+        this.errorMessage =
+          error.response?.data?.error || "No hay disponibilidad."
+
       }
     },
+
     async submitReservation() {
-      this.availabilityMessage = ''
-      this.errorMessage = ''
+
+      this.availabilityMessage = ""
+      this.errorMessage = ""
 
       try {
-        const response = await api.post('/reservations/create/', this.form)
+
+        const response = await api.post("/reservations/create/", this.form)
 
         this.$router.push({
-          name: 'success',
+          name: "success",
           query: {
             code: response.data.reservation_code,
             table: response.data.table_number,
             status: response.data.status
           }
         })
+
       } catch (error) {
-        this.errorMessage = error.response?.data?.error || 'Error al crear la reserva.'
+
+        this.errorMessage =
+          error.response?.data?.error || "Error al crear la reserva."
+
       }
     }
   }
@@ -87,46 +102,48 @@ export default {
 </script>
 
 <style scoped>
-.card {
-  background: white;
-  padding: 24px;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+
+.card{
+background:white;
+padding:24px;
+border-radius:10px;
+box-shadow:0 2px 8px rgba(0,0,0,.08);
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-bottom: 16px;
+.grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:12px;
+margin-bottom:16px;
 }
 
-input {
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
+input{
+padding:12px;
+border:1px solid #ccc;
+border-radius:8px;
 }
 
-button {
-  margin-right: 10px;
-  margin-top: 10px;
-  padding: 12px 18px;
-  border: none;
-  border-radius: 8px;
-  background: #2563eb;
-  color: white;
-  cursor: pointer;
+button{
+margin-right:10px;
+margin-top:10px;
+padding:12px 18px;
+border:none;
+border-radius:8px;
+background:#2563eb;
+color:white;
+cursor:pointer;
 }
 
-.message {
-  margin-top: 20px;
-  color: green;
-  font-weight: bold;
+.message{
+margin-top:20px;
+color:green;
+font-weight:bold;
 }
 
-.error {
-  margin-top: 20px;
-  color: red;
-  font-weight: bold;
+.error{
+margin-top:20px;
+color:red;
+font-weight:bold;
 }
+
 </style>

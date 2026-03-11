@@ -12,6 +12,13 @@
       />
 
       <input
+        v-model="form.email"
+        type="email"
+        placeholder="Correo electrónico"
+        required
+      />
+
+      <input
         v-model="form.phone"
         placeholder="Teléfono"
         required
@@ -38,6 +45,7 @@
       />
 
       <div class="buttons">
+
         <button type="button" @click="checkAvailability">
           Consultar disponibilidad
         </button>
@@ -45,6 +53,7 @@
         <button type="submit">
           Crear reserva
         </button>
+
       </div>
 
     </form>
@@ -72,6 +81,7 @@ return{
 
 form:{
 name:"",
+email:"",
 phone:"",
 date:"",
 time:"",
@@ -94,7 +104,7 @@ this.availabilityMessage=""
 
 try{
 
-const response = await api.get("/reservations/availability/",{
+const response = await api.get("/api/reservations/availability/",{
 params:{
 date:this.form.date,
 time:this.form.time,
@@ -109,7 +119,7 @@ this.availabilityMessage =
 
 }else{
 
-this.errorMessage = "No hay mesas disponibles."
+this.errorMessage="No hay mesas disponibles."
 
 }
 
@@ -130,9 +140,10 @@ this.availabilityMessage=""
 
 try{
 
-const response = await api.post("/reservations/create/",{
+const response = await api.post("/api/reservations/create/",{
 
 name:this.form.name,
+email:this.form.email,
 phone:this.form.phone,
 date:this.form.date,
 time:this.form.time,

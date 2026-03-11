@@ -5,13 +5,29 @@
 
     <form @submit.prevent="submitReservation">
 
-      <input v-model="form.name" placeholder="Nombre" required />
+      <input
+        v-model="form.name"
+        placeholder="Nombre"
+        required
+      />
 
-      <input v-model="form.phone" placeholder="Teléfono" required />
+      <input
+        v-model="form.phone"
+        placeholder="Teléfono"
+        required
+      />
 
-      <input type="date" v-model="form.date" required />
+      <input
+        type="date"
+        v-model="form.date"
+        required
+      />
 
-      <input type="time" v-model="form.time" required />
+      <input
+        type="time"
+        v-model="form.time"
+        required
+      />
 
       <input
         type="number"
@@ -79,22 +95,29 @@ this.availabilityMessage=""
 try{
 
 const response = await api.get("/reservations/availability/",{
-
 params:{
 date:this.form.date,
 time:this.form.time,
 guests:this.form.guests
 }
-
 })
 
-this.availabilityMessage="Mesa disponible."
+if(response.data.available){
+
+this.availabilityMessage =
+`Mesa ${response.data.table_number} disponible para ${response.data.capacity} personas.`
+
+}else{
+
+this.errorMessage = "No hay mesas disponibles."
+
+}
 
 }catch(error){
 
-this.errorMessage=
+this.errorMessage =
 error.response?.data?.error ||
-"No hay disponibilidad."
+"Error al consultar disponibilidad."
 
 }
 
@@ -120,13 +143,15 @@ guests:this.form.guests
 this.$router.push({
 name:"success",
 query:{
-code:response.data.reservation_code
+code:response.data.reservation_code,
+table:response.data.table_number,
+status:response.data.status
 }
 })
 
 }catch(error){
 
-this.errorMessage=
+this.errorMessage =
 error.response?.data?.error ||
 "Error al crear la reserva."
 
@@ -147,7 +172,7 @@ background:white;
 padding:24px;
 border-radius:10px;
 box-shadow:0 2px 8px rgba(0,0,0,.08);
-max-width:400px;
+max-width:420px;
 margin:auto;
 }
 
@@ -176,11 +201,13 @@ cursor:pointer;
 .error{
 color:red;
 margin-top:10px;
+font-weight:600;
 }
 
 .success{
 color:green;
 margin-top:10px;
+font-weight:600;
 }
 
 </style>

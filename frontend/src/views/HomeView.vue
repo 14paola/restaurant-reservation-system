@@ -94,7 +94,7 @@ this.availabilityMessage=""
 
 try{
 
-const response = await api.get("/api/reservations/availability/",{
+const response = await api.get("/reservations/availability/",{
 params:{
 date:this.form.date,
 time:this.form.time,
@@ -130,7 +130,7 @@ this.availabilityMessage=""
 
 try{
 
-const response = await api.post("/api/reservations/create/",{
+const response = await api.post("/reservations/create/",{
 
 name:this.form.name,
 phone:this.form.phone,

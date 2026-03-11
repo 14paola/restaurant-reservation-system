@@ -57,7 +57,7 @@ this.errorMessage=""
 
 try{
 
-await api.post("/reservations/cancel/",{
+await api.post("/api/reservations/cancel/",{
 
 reservation_code:this.reservationCode
 
